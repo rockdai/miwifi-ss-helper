@@ -67,9 +67,4 @@ app.delete('/domain', function (req, res) {
   return res.json(result);
 });
 
-var server = app.listen(config.webPort, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('app listening at http://%s:%s', host, port);
-});
+module.exports = app;

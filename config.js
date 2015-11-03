@@ -20,7 +20,6 @@ module.exports = {
   },
   storage: {
     domain: 'domain.json',
-    fgserver: 'fgserver.conf',
-    fgset: 'fgset.conf',
+    dnsmasq: 'dnsmasq.conf',
   },
 };

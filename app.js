@@ -10,30 +10,34 @@
 /**
  * Module dependencies.
  */
-
+var config = require('./config');
+var webApp = require('./web');
 var path = require('path');
 var fs = require('fs');
 var rootdir = __dirname;
 
-var SYS_PATH = {
-  dnsmasq: '/etc/init.d/dnsmasq',
-  fgserver: '/etc/dnsmasq.d/fgserver.conf',
-  fgset: '/etc/dnsmasq.d/fgset.conf',
-};
-
 // Check system path
-for (var k in SYS_PATH) {
-  if (SYS_PATH.hasOwnProperty(k)) {
-    if (!fs.existsSync(SYS_PATH[k])) {
-      console.error(SYS_PATH[k] + ' is required!');
-      process.exit(1);
-    }
+[
+  '/etc/init.d/dnsmasq',
+  '/etc/dnsmasq.d/gfwlist.conf',
+].forEach(function (item) {
+  if (!fs.existsSync(item)) {
+    console.error(item + ' is required!');
+    process.exit(1);
   }
-}
+});
 
-// Init storage dir
+// Init storage
 var storageDir = path.join(rootdir, 'storage');
 if (!fs.existsSync(storageDir)) {
   fs.mkdirSync(storageDir);
 }
+
+// Lunch web app
+var server = webApp.listen(config.webPort, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('app listening at http://%s:%s', host, port);
+});
 

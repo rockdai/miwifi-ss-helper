@@ -12,14 +12,12 @@
  */
 var path = require('path');
 var fs = require('fs');
-var fgserver = require('./dnsmasq/fgserver');
-var fgset = require('./dnsmasq/fgset');
+var dnsmasqConf = require('./dnsmasq/config');
 var config = require('./config');
 
 var rootdir = __dirname;
 var domainStorage = path.join(rootdir, 'storage', config.storage.domain);
-var fgserverStorage = path.join(rootdir, 'storage', config.storage.fgserver);
-var fgsetStorage = path.join(rootdir, 'storage', config.storage.fgset);
+var dnsmasqConfStorage = path.join(rootdir, 'storage', config.storage.dnsmasq);
 var dnsServAddr = config.dnsmasq.server;
 var dnsServPort = config.dnsmasq.port;
 
@@ -36,13 +34,11 @@ exports.getDomainList = function () {
 };
 
 exports.setDomainList = function (domainList) {
-  var string = JSON.stringify(domainList);
-  fs.writeFileSync(domainStorage, string, 'utf8');
+  var str = JSON.stringify(domainList);
+  fs.writeFileSync(domainStorage, str, 'utf8');
 };
 
 exports.setDnsmasq = function (domainList) {
-  var fgserverStr = fgserver.makePrintable(domainList, dnsServAddr, dnsServPort);
-  fs.writeFileSync(fgserverStorage, fgserverStr, 'utf8');
-  var fgsetStr = fgset.makePrintable(domainList);
-  fs.writeFileSync(fgsetStorage, fgsetStr, 'utf8');
+  var str = dnsmasqConf.make(domainList, dnsServAddr, dnsServPort);
+  fs.writeFileSync(dnsmasqConfStorage, str, 'utf8');
 };
