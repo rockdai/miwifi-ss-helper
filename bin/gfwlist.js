@@ -13,37 +13,15 @@
  * Module dependencies.
  */
 
-var urllib = require('urllib');
-var utility = require('utility');
+var gfwList = require('../lib/gfwlist');
 var _ = require('lodash');
 var db = require('../db');
 
-var gfwlistUrl = 'https://autoproxy-gfwlist.googlecode.com/svn/trunk/gfwlist.txt'
-var commentPattern = /^\!|\[|^@@|^\d+\.\d+\.\d+\.\d+/g;
-var domainPattern = /([\w\-\_]+\.[\w\.\-\_]+)[\/\*]*/g;
-
-urllib.request(gfwlistUrl, function (err, data, res) {
+gfwList.get(function (err, domainList) {
   if (err) {
     console.log(err);
     process.exit(1);
   }
-  var gfwlist = utility.base64decode(data.toString()).split('\n');
-  var domainList = [];
-  gfwlist.forEach(function (line) {
-    if (!line) {
-      return;
-    }
-    if (!line.match(commentPattern)) {
-      if (line.match(domainPattern)) {
-        line.match(domainPattern).forEach(function (d) {
-          if (d[d.length - 1] === '/') {
-            d = d.substring(0, d.length - 1);
-          }
-          domainList.push(d);
-        });
-      }
-    }
-  });
   domainList = _.uniq(domainList);
   db.setDomainList(domainList);
   db.setDnsmasq(domainList);

@@ -28,3 +28,4 @@ node_modules
 
 .DS_Store
 storage
+pac_list.js
