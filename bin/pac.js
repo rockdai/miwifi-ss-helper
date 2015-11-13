@@ -22,7 +22,7 @@ var pacList = require('../pac_list');
 
 var pacDomains = [];
 for (var d in pacList) {
-  if (pacList.hasOwnProperty(d)) {
+  if (pacList.hasOwnProperty(d) && pacList[d] === 1) {
     pacDomains.push(d);
   }
 }

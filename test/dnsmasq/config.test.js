@@ -19,7 +19,6 @@ var mockDomain = [
   'googleusercontent.com',
 ];
 var mockServer = '208.67.222.222';
-var mockPort = 443;
 
 describe('dnsmasq/config.test.js', function () {
 
@@ -27,11 +26,10 @@ describe('dnsmasq/config.test.js', function () {
     it('should return empty string when invalid param', function () {
       dnsmasqConf.make().should.equal('');
       dnsmasqConf.make(mockDomain).should.equal('');
-      dnsmasqConf.make(mockDomain, mockServer).should.equal('');
-      dnsmasqConf.make([], mockServer, mockPort).should.equal('');
+      dnsmasqConf.make([], mockServer).should.equal('');
     });
     it('should work', function () {
-      var r = dnsmasqConf.make(mockDomain, mockServer, mockPort);
+      var r = dnsmasqConf.make(mockDomain, mockServer, 443);
       r.should.be.a.String;
       r.split('\n').length.should.equal(mockDomain.length * 2);
     });

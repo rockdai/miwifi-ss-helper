@@ -19,7 +19,7 @@ var rootdir = __dirname;
 // Check system path
 [
   '/etc/init.d/dnsmasq',
-  '/etc/dnsmasq.d/gfwlist.conf',
+  '/etc/dnsmasq.d/dnsmasq.conf',
 ].forEach(function (item) {
   if (!fs.existsSync(item)) {
     console.error(item + ' is required!');
