@@ -1,0 +1,72 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+. /lib/functions.sh
+. /lib/functions/network.sh
+
+START=95
+
+SERVICE_USE_PID=1
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+CONFIG_FILE="/etc/shadowsocks/config.json"
+
+local_addr="127.0.0.1"
+local_port=1082
+timeout=600
+server="cool.18cm.club"
+server_port="443"
+password="hello"
+method="aes-256-cfb"
+config_load shadowsocks
+
+config_get is_enabled config enabled
+config_get server config server
+config_get server_port config server_port
+config_get password config password
+config_get method config method
+config_get ss_status config status
+config_get domain_file config domain_file
+
+ss_logger() {
+  logger -t shadowsocks "$1"
+  echo "shadowsocks:$1"
+}
+
+ss_config_make() {
+  echo "server $server; $server_port ; $password; $method"
+  [ -n "$server" ] || { ss_logger "error: remote server is not set"; return 1; }
+  [ -n "$server_port" ] || { ss_logger "error: remote server port is not set"; return 1; }
+  [ -n "$password" ] || { ss_logger "error: remote server password is not set"; return 1; }
+  [ -n "$method" ] || { ss_logger "error: remote server method is not set"; return 1; }
+
+#  "local_address":"$local_addr",
+
+cat << EOF > $CONFIG_FILE
+{
+  "server":"$server",
+  "server_port":"$server_port",
+  "local_port":"$local_port",
+  "password":"$password",
+  "timeout":"600",
+  "method":"$method"
+}
+EOF
+
+  return 0
+}
+
+start() {
+  ss_config_make || { ss_logger "config error."; return 1; }
+  service_start /usr/bin/ss-redir -c $CONFIG_FILE -b 0.0.0.0
+  [ $? = 0 ] || { ss_logger "restart shadowsocks service error."; return 1; }
+  uci set shadowsocks.config.status=on
+  uci commit shadowsocks
+}
+
+stop() {
+  service_stop /usr/bin/ss-redir
+  uci set shadowsocks.config.status=off
+  uci commit shadowsocks
+}
