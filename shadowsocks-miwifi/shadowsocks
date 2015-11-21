@@ -15,9 +15,9 @@ CONFIG_FILE="/etc/shadowsocks/config.json"
 local_addr="127.0.0.1"
 local_port=1082
 timeout=600
-server="cool.18cm.club"
-server_port="443"
-password="hello"
+server=""
+server_port=""
+password=""
 method="aes-256-cfb"
 config_load shadowsocks
 
